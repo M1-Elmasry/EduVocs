@@ -1,5 +1,7 @@
 # language learner assistant
 
+**note**: this project is actively under development, and new features and improvements are being added regularly
+
 ## Overview
 
 The Vocabulary Acquisition Tool is a Python project designed to help language learners enhance their vocabulary without traditional study methods. It offers a flexible and practical way to capture, store, and manage new words and sentences along with their translations. This tool simplifies the process of organizing and tracking your language learning progress.
