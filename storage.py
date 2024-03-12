@@ -3,8 +3,7 @@
 
 import os
 import sqlite3
-from manager import Manager
-
+import translate
 
 class Storage:
     """
@@ -14,6 +13,8 @@ class Storage:
     It includes methods for saving, loading, flipping the state of records between "learning" and "knowing",
     deleting records, and editing the translation of specific records.
     """
+    db_dir = os.getenv("HOME")
+    db_name = "vocabs"
 
     def __init__(self):
         """
@@ -23,22 +24,20 @@ class Storage:
         and defining the table structure for storing records.
         """
 
-        home_dir = os.getenv("HOME")
-        self.__dbname = "vocabs"
-        self.__con = sqlite3.connect(f"{home_dir}/{self.__dbname}.db")
+        self.__con = sqlite3.connect(f"{Storage.db_dir}/{Storage.db_name}.db")
         self.__cur = self.__con.cursor()
         self.__cur.execute(
             """CREATE TABLE IF NOT EXISTS vocabs(
         voc_or_sent VARCHAR(256) NOT NULL UNIQUE,
         translation VARCHAR(265) NOT NULL,
-        lang_from VARCHAR(20) NOT NULL,
-        lang_to VARCHAR(20) NOT NULL,
-        state VARCHAR(20) NOT NULL,
+        source_lang VARCHAR(20) NOT NULL,
+        target_lang VARCHAR(20) NOT NULL,
+        state VARCHAR(1) NOT NULL,
         add_time DATETIME NOT NULL
         );"""
         )
 
-    def save_record(self, voc_or_sent, lang_from, lang_to):
+    def save_record(self, voc_or_sent, source_lang, target_lang):
         """
         Save a new record to the database.
 
@@ -47,19 +46,19 @@ class Storage:
 
         Args:
             voc_or_sent (str): The original vocabulary or sentence to be saved.
-            lang_from (str): The source language of the vocabulary or sentence.
-            lang_to (str): The target language for translation.
+            source_lang (str): The source language of the vocabulary or sentence.
+            target_lang (str): The target language for translation.
 
         Raises:
             sqlite3.IntegrityError: If the vocabulary or sentence already exists in the database.
         """
-        translation = Manager.translate(voc_or_sent, lang_from, lang_to)
+        translation = translate.translate(voc_or_sent, source_lang, target_lang)
 
         try:
             self.__cur.execute(
                 f"""INSERT INTO vocabs(voc_or_sent, translation, lang_from, lang_to, state, add_time) 
             VALUES
-            ('{voc_or_sent}', '{translation}', '{lang_from}', '{lang_to}', 'learning', datetime('now'))"""
+            ('{voc_or_sent}', '{translation}', '{source_lang}', '{target_lang}', 'L', datetime('now'))"""
             )
         except sqlite3.IntegrityError:
             print(
@@ -82,15 +81,14 @@ class Storage:
 
         """
         result = self.__cur.execute(
-            """SELECT * FROM vocabs WHERE state = 'learning'"""
+            """SELECT * FROM vocabs WHERE state = 'L'"""
         )
         all_learning = result.fetchall()
 
         result = self.__cur.execute(
-            """SELECT * FROM vocabs WHERE state = 'knowing'"""
+            """SELECT * FROM vocabs WHERE state = 'K'"""
         )
         all_knowing = result.fetchall()
-        # print(all_learning)
         return {"learning": all_learning, "knowing": all_knowing}
 
     def flip_record(self, voc_or_sent):
@@ -105,7 +103,7 @@ class Storage:
 
         """
         self.__cur.execute(
-            f"""UPDATE vocabs SET state = 'knowing' WHERE voc_or_sent = '{voc_or_sent}'"""
+            f"""UPDATE vocabs SET state = 'K' WHERE voc_or_sent = '{voc_or_sent}'"""
         )
 
     def delete_record(self, voc_or_sent):
