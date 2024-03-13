@@ -7,7 +7,8 @@ from PySide6.QtWidgets import (
                             QHBoxLayout,
                             QWidget,
                             QLabel,
-                            QLineEdit
+                            QLineEdit,
+                            QPushButton
                             )
 from center_widget import center
 from webbrowser import open
@@ -16,6 +17,8 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QWidget, QSizePolicy
 from learning_window import LearningWindow
 from knowing_window import KnowingWindow
+# from database_record_1 import databaseRecord
+from database_record import databaseRecord
 
 class UserWindow(QMainWindow):
     def __init__(self):
@@ -142,16 +145,18 @@ class UserWindow(QMainWindow):
 
         # Connect it to textchange signal --> Slot: database searching algorithm
         search_bar.textChanged.connect(self.search_records)
-
-        database_records = QLabel("Database records")
-        database_records.setAlignment(Qt.AlignCenter)
-
-        # Adding the labels to the right layout
+        # Adding the word search bar to the right verticle layout
         right_layout.addWidget(search_bar)
-        right_layout.addWidget(database_records)
+
+
+        # Making the data base record widget
+        record_container = databaseRecord("Hello", "مرحبا")
+
+        # Adding the record_container to the right layout
+        right_layout.addWidget(record_container)
+
 
         self.right_widget = right_widget
-
         central_widget.setLayout(main_layout)
 
     def open_about_page(self):
