@@ -13,8 +13,8 @@
           <h1 class="logo">EduVocs</h1>
           <div class="nav-links">
             <a href="#features">Features</a>
-            <a href="#">About</a>
-            <a href="#">Contact</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
           </div>
         </nav>
       </header>
@@ -42,7 +42,7 @@
         <h2 class="section-headline" id="features">FEATURES</h2>
         <div class="features-section">
           <div class="feature-card">
-            <h3>Feature 1</h3>
+            <h3>Translation Service</h3>
             <p>
               Lorem Ipsum is simply dummy text of the printing and typesetting
               industry. Lorem Ipsum has been the industry's standard dummy text
@@ -53,7 +53,7 @@
             </p>
           </div>
           <div class="feature-card">
-            <h3>Feature 2</h3>
+            <h3>Word Tracking</h3>
             <p>
               Lorem Ipsum is simply dummy text of the printing and typesetting
               industry. Lorem Ipsum has been the industry's standard dummy text
@@ -64,7 +64,7 @@
             </p>
           </div>
           <div class="feature-card">
-            <h3>Feature 3</h3>
+            <h3>Easy Accessibility</h3>
             <p>
               Lorem Ipsum is simply dummy text of the printing and typesetting
               industry. Lorem Ipsum has been the industry's standard dummy text
@@ -101,7 +101,21 @@
           </p>
         </div>        
         <h2 class="section-headline" id="contact">CONTACT US</h2>
-        <div>
+        <div class="form-container">  
+        <form id="contactForm" action="mailto:mostafamfelmasry@outlook.com" method="post" enctype="text/plain" class="contact-form">
+            <div class="contact-section-left-side">
+              <label for="name">Name:</label><br>
+              <input type="text" id="name" name="name" placeholder="Enter your name" required><br><br>
+              <label for="email">Email:</label><br>
+              <input type="email" id="email" name="email" placeholder="Enter your email" required><br><br>
+            </div>
+            <div class="contact-section-right-side">
+             <label for="message">Message:</label><br>
+             <textarea id="message" name="message" placeholder="Enter your message" rows="4" required></textarea><br><br>         
+            </div>
+            <input type="submit" value="Send Message">           
+        </form>
+        </div>
       </div>
     </div>
   </body>
