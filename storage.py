@@ -15,6 +15,7 @@ class Storage:
     """
     db_dir = os.getenv("HOME")
     db_name = "vocabs"
+    __all_records = {}
 
     def __init__(self):
         """
@@ -32,8 +33,7 @@ class Storage:
         translation VARCHAR(265) NOT NULL,
         source_lang VARCHAR(20) NOT NULL,
         target_lang VARCHAR(20) NOT NULL,
-        state VARCHAR(1) NOT NULL,
-        add_time DATETIME NOT NULL
+        state VARCHAR(1) NOT NULL
         );"""
         )
 
@@ -56,9 +56,9 @@ class Storage:
 
         try:
             self.__cur.execute(
-                f"""INSERT INTO vocabs(voc_or_sent, translation, lang_from, lang_to, state, add_time) 
+                f"""INSERT INTO vocabs(voc_or_sent, translation, source_lang, target_lang, state) 
             VALUES
-            ('{voc_or_sent}', '{translation}', '{source_lang}', '{target_lang}', 'L', datetime('now'))"""
+            ('{voc_or_sent}', '{translation}', '{source_lang}', '{target_lang}', 'L')"""
             )
         except sqlite3.IntegrityError:
             print(
@@ -67,6 +67,7 @@ class Storage:
             exit()
 
         self.__con.commit()
+        return self.load_records()
 
     def load_records(self):
         """
@@ -89,7 +90,8 @@ class Storage:
             """SELECT * FROM vocabs WHERE state = 'K'"""
         )
         all_knowing = result.fetchall()
-        return {"learning": all_learning, "knowing": all_knowing}
+        Storage.__all_records = {"learning": all_learning, "knowing": all_knowing}
+        return Storage.__all_records
 
     def flip_record(self, voc_or_sent):
         """
@@ -105,6 +107,7 @@ class Storage:
         self.__cur.execute(
             f"""UPDATE vocabs SET state = 'K' WHERE voc_or_sent = '{voc_or_sent}'"""
         )
+        return self.load_records()
 
     def delete_record(self, voc_or_sent):
         """
@@ -117,6 +120,7 @@ class Storage:
         self.__cur.execute(
             f"""DELETE FROM vocabs WHERE voc_or_sent = '{voc_or_sent}'"""
         )
+        return self.load_records()
 
     def edit_record_translation(self, voc_or_sent, new_translation):
         """
@@ -131,3 +135,4 @@ class Storage:
         self.__cur.execute(
             f"""UPDATE vocabs SET translation = '{new_translation}' WHERE voc_or_sent = '{voc_or_sent}'"""
         )
+        return self.load_records()
