@@ -3,7 +3,7 @@
 
 import os
 import sqlite3
-import translate
+from EduVocs import translate
 
 class Storage:
     """
