@@ -16,7 +16,7 @@ from user_window import UserWindow
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from center_widget import center
-from knowing_window import KnowingWindow
+from .knowing_window import KnowingWindow
 # Insure about he email format
 from re import match
 

@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
                             QLabel,
                             QLineEdit
                             )
-from center_widget import center
+from .center_widget import center
 from webbrowser import open
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon

@@ -9,12 +9,12 @@ from PySide6.QtWidgets import (
                             QLabel,
                             QLineEdit
                             )
-from center_widget import center
+from .center_widget import center
 from webbrowser import open
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QWidget, QSizePolicy
-from learning_window import LearningWindow
+from .learning_window import LearningWindow
 
 class KnowingWindow(QMainWindow):
     def __init__(self):

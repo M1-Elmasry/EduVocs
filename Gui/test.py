@@ -9,21 +9,18 @@ from PySide6.QtWidgets import (
     QApplication
 )
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QSizePolicy
-from .. import storage
+# from .. import storage
 
 class databaseRecord(QWidget):
     def __init__(self, word_rec, trans_rec):
         super().__init__()
         self.word_rec = word_rec
         self.trans_rec = trans_rec
-        self.storage_obj = storage.Storage()
 
         # Creating frame to hold the record charastaristics
         frame = QFrame()
         frame_layout = QHBoxLayout(frame)
-        # frame_layout.setSpacing(30)
-        frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        frame_layout.setSpacing(80)
 
         record_word = QLabel(f"{word_rec}")
         translate_word = QLabel(f"{trans_rec}")
@@ -32,12 +29,10 @@ class databaseRecord(QWidget):
         add_to_knowing = QPushButton("Know")
         read_button = QPushButton("Read")
 
-        # Style Sheets
         button_stylesheet = """
         QPushButton {
             background-color: #00838F;
             color: #F0F8FF;
-            width: 60px;
             padding: 10px;
         }
         """
@@ -45,7 +40,6 @@ class databaseRecord(QWidget):
         QPushButton {
             background-color: #800E01;
             color: #F0F8FF;
-            width: 60px;
             padding: 10px;
         }
         """
@@ -53,19 +47,8 @@ class databaseRecord(QWidget):
         record_styesheet = """
             color: #F0F8FF;
             font-size: 16px;
-            border: none;
-            width: fit-content;
+            border: none
         """
-
-        frame.setStyleSheet("""
-            QFrame {
-                border: 2px solid #686d75;
-                border-radius: 50px;
-                padding: 5px 20px;
-                min-width: 100%;
-            }
-        """)
-
         read_button.setStyleSheet(button_stylesheet)
         add_to_knowing.setStyleSheet(button_stylesheet)
         delete_record.setStyleSheet(delete_button_stylesheet)
@@ -79,7 +62,7 @@ class databaseRecord(QWidget):
 
         # Creating Horizontal layout to hold buttons
         buttons_layout = QHBoxLayout()
-        buttons_layout.setSpacing(20)
+        buttons_layout.setSpacing(10)
         buttons_layout.addWidget(delete_record)
         buttons_layout.addWidget(edit_record)
         buttons_layout.addWidget(read_button)
@@ -90,6 +73,14 @@ class databaseRecord(QWidget):
         frame_layout.addWidget(translate_word)
         frame_layout.addLayout(buttons_layout)
         
+
+        frame.setStyleSheet("""
+            QFrame {
+                border: 2px solid #686d75;
+                border-radius: 5px;
+                padding: 5px 20px;
+            }
+        """)
 
         record_word.setStyleSheet(record_styesheet)
         translate_word.setStyleSheet(record_styesheet)
@@ -107,7 +98,7 @@ class databaseRecord(QWidget):
         print("Added to knowing")
 
     def delete_record_buttom(self):
-        self.storage_obj.delete_record(self.word_rec)
+        # storage.delete_record(self.word_rec)
         print("Deleted")
 
     def edit_record_buttom(self):

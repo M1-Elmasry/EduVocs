@@ -10,23 +10,22 @@ from PySide6.QtWidgets import (
                             QLineEdit,
                             QPushButton
                             )
-from center_widget import center
+from .center_widget import center
 from webbrowser import open
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QWidget, QSizePolicy
-from learning_window import LearningWindow
-from knowing_window import KnowingWindow
-# from database_record_1 import databaseRecord
-from database_record import databaseRecord
+from PySide6.QtWidgets import QWidget, QSizePolicy, QScrollArea
+from .learning_window import LearningWindow
+from .knowing_window import KnowingWindow
+from .database_record import databaseRecord
+from EduVocs.storage import Storage
 
 class UserWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("EduVocs")
         self.setWindowIcon(QIcon("assets/EduVocs_icon.png"))
-        self.setFixedSize(900, 600)
-        # self.setFixedSize(767, 1024)
+        self.setMinimumSize(1000, 650)
         center(self)
 
         """ Making menuBar"""
@@ -149,11 +148,33 @@ class UserWindow(QMainWindow):
         right_layout.addWidget(search_bar)
 
 
-        # Making the data base record widget
-        record_container = databaseRecord("Hello", "مرحبا")
+        #######################################################################
+        ##################### Start records representation ####################
+        #######################################################################
 
-        # Adding the record_container to the right layout
-        right_layout.addWidget(record_container)
+        # Making a verticle layout for records
+        # record_layout = QVBoxLayout()
+        # record_layout.setAlignment(Qt.AlignCenter)
+        # right_layout.addLayout(record_layout)
+
+        # Make a QScrollArea to hold the records
+        record_scroll_area = QScrollArea()
+        record_scroll_area.setWidgetResizable(True)  # Allow the scroll area to resize its widget
+        right_layout.addWidget(record_scroll_area)
+
+        # Create a QWidget to contain the records layout
+        record_container = QWidget()
+        record_scroll_area.setWidget(record_container)
+
+        # Make a verticle layout to hold the record container
+        record_layout = QVBoxLayout(record_container)
+        record_layout.setAlignment(Qt.AlignCenter)
+
+        storage = Storage()
+
+        for record in storage.load_records()["learning"]:
+            record_widget = databaseRecord(record[0], record[1])
+            record_layout.addWidget(record_widget)
 
 
         self.right_widget = right_widget

@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QLabel
-from center_widget import center
+from .center_widget import center
 from PySide6.QtGui import QMovie, QIcon
 
 # Create loading Label
