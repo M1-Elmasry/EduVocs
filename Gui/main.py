@@ -6,8 +6,8 @@
 """
 
 from PySide6.QtWidgets import QApplication
-from main_window import MainWindow
-from loading_window import Loading
+from .main_window import MainWindow
+from .loading_window import Loading
 from PySide6.QtCore import QTimer
 
 """ STEP [1]"""

@@ -7,9 +7,9 @@ class Loading(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("EduVocs Loading")
-        self.setWindowIcon(QIcon("assets/EduVocs_icon.png"))
+        self.setWindowIcon(QIcon("/home/mahmoud/Desktop/Repos/EduVocs/Gui/assets/EduVocs_icon.png"))
         self.setFixedSize(900, 600)
-        self.movie = QMovie("assets/loading.gif")
+        self.movie = QMovie("/home/mahmoud/Desktop/Repos/EduVocs/Gui/assets/loading.gif")
         self.label = QLabel(self)
         self.label.setMovie(self.movie)
         self.label.setGeometry(380, 100, 400, 400)

@@ -24,7 +24,7 @@ class UserWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("EduVocs")
-        self.setWindowIcon(QIcon("assets/EduVocs_icon.png"))
+        self.setWindowIcon(QIcon("/home/mahmoud/Desktop/Repos/EduVocs/Gui/assets/EduVocs_icon.png"))
         self.setMinimumSize(1000, 650)
         center(self)
 
@@ -117,7 +117,8 @@ class UserWindow(QMainWindow):
         header = QHBoxLayout()
 
         # Making the header labels which are the records counter and the app logo
-        record_counter = QLineEdit("0")
+        records_count = 0
+        record_counter = QLineEdit(f"{records_count}")
         record_counter.setReadOnly(True)
         record_counter.setAlignment(Qt.AlignCenter)
         record_counter.setStyleSheet("padding: 3px; border: 1px solid #f7f6f7 \
@@ -173,6 +174,7 @@ class UserWindow(QMainWindow):
         storage = Storage()
 
         for record in storage.load_records()["learning"]:
+            records_count = records_count + 1
             record_widget = databaseRecord(record[0], record[1])
             record_layout.addWidget(record_widget)
 

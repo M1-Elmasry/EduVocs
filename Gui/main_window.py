@@ -12,10 +12,10 @@ from PySide6.QtWidgets import (
                         QVBoxLayout,
                         QHBoxLayout
                             )
-from user_window import UserWindow
+from .user_window import UserWindow
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
-from center_widget import center
+from .center_widget import center
 from .knowing_window import KnowingWindow
 # Insure about he email format
 from re import match
@@ -27,10 +27,9 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setCentralWidget(QWidget())
         # Big screens
-        # self.setMinimumSize(767, 1024)
         self.setMinimumSize(900, 600)
         self.setWindowTitle("EduVocs")
-        self.setWindowIcon(QIcon("assets/EduVocs_icon.png"))
+        self.setWindowIcon(QIcon("/home/mahmoud/Desktop/Repos/EduVocs/Gui/assets/EduVocs_icon.png"))
         
         center(self)
         if self.size().width() <= 767:

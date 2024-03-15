@@ -20,7 +20,7 @@ class KnowingWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("EduVocs")
-        self.setWindowIcon(QIcon("assets/EduVocs_icon.png"))
+        self.setWindowIcon(QIcon("/home/mahmoud/Desktop/Repos/EduVocs/Gui/assets/EduVocs_icon.png"))
         self.setFixedSize(900, 600)
         self.showEvent = self.window_shown
 
