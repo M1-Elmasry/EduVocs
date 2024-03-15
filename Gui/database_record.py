@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QApplication
 )
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QSizePolicy
+from PySide6.QtWidgets import QWidget, QSizePolicy, QSpacerItem
 from .. import storage
 
 class databaseRecord(QWidget):
@@ -22,8 +22,8 @@ class databaseRecord(QWidget):
         # Creating frame to hold the record charastaristics
         frame = QFrame()
         frame_layout = QHBoxLayout(frame)
-        # frame_layout.setSpacing(30)
-        frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # frame_layout.setSpacing(20)
+        frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         record_word = QLabel(f"{word_rec}")
         translate_word = QLabel(f"{trans_rec}")
@@ -85,9 +85,13 @@ class databaseRecord(QWidget):
         buttons_layout.addWidget(read_button)
         buttons_layout.addWidget(add_to_knowing)
 
+
         # Adding the widgets and buttons layout to the frame
+        spacer = QSpacerItem(20, 40, QSizePolicy.Expanding, QSizePolicy.Minimum)
         frame_layout.addWidget(record_word)
+        frame_layout.addItem(spacer)
         frame_layout.addWidget(translate_word)
+        frame_layout.addItem(spacer)
         frame_layout.addLayout(buttons_layout)
         
 
