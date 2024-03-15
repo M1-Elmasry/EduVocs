@@ -107,6 +107,7 @@ class Storage:
         self.__cur.execute(
             f"""UPDATE vocabs SET state = 'K' WHERE voc_or_sent = '{voc_or_sent}'"""
         )
+        self.__con.commit()
         return self.load_records()
 
     def delete_record(self, voc_or_sent):
@@ -120,6 +121,7 @@ class Storage:
         self.__cur.execute(
             f"""DELETE FROM vocabs WHERE voc_or_sent = '{voc_or_sent}'"""
         )
+        self.__con.commit()
         return self.load_records()
 
     def edit_record_translation(self, voc_or_sent, new_translation):
@@ -135,4 +137,5 @@ class Storage:
         self.__cur.execute(
             f"""UPDATE vocabs SET translation = '{new_translation}' WHERE voc_or_sent = '{voc_or_sent}'"""
         )
+        self.__con.commit()
         return self.load_records()
