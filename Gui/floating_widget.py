@@ -1,19 +1,18 @@
 from PySide6.QtWidgets import (
-    QApplication,
-    QPushButton,
-    QWidget,
-    QLineEdit,
-    QVBoxLayout,
-    QComboBox,
-    QHBoxLayout,
-)
+                QApplication,
+                QPushButton,
+                QWidget,
+                QLineEdit,
+                QComboBox,
+                QHBoxLayout,
+                )
 from PySide6.QtCore import Qt, QPoint
 
 
 class FABWidget(QPushButton):
     def __init__(self):
         super().__init__()
-
+        self.input_widget = None
         # Set button properties
         self.setText("+")
         self.setStyleSheet(
@@ -35,8 +34,18 @@ class FABWidget(QPushButton):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
+        screen_geometry = QApplication.primaryScreen().geometry()
+
+        # Set the widget dimentions
+        self.setGeometry(0, 0, 50, 50)
+
+        # Set the widget initial posotioning
+        # Calculate the initial position (centered horizontally and positioned to the left)
+        initial_x = 0
+        initial_y = screen_geometry.height() // 2 - self.height() // 2  # Center vertically
+
         # Position the button initially
-        self.setGeometry(100, 100, 50, 50)
+        self.move(initial_x, initial_y)
 
         # Variables to track mouse movement
         self.drag_start_position = QPoint()
@@ -50,14 +59,20 @@ class FABWidget(QPushButton):
             new_position = event.globalPosition() - self.drag_start_position
             self.move(new_position.toPoint())  # Convert QPointF to QPoint
 
+            # Move the InputWidget along with the FABWidget
+            if self.input_widget is not None:
+                self.input_widget.move(self.mapToGlobal(QPoint(0, self.height() + 5)))
+
     def mouseReleaseEvent(self, event):
         self.drag_start_position = QPoint()
 
     def mouseDoubleClickEvent(self, event):
-        input_widget = InputWidget()
-        input_widget.move(self.mapToGlobal(QPoint(0, self.height() + 5)))
-        input_widget.show()
-        print("double clicked")
+        if self.input_widget is None or not self.input_widget.isVisible():
+            self.input_widget = InputWidget()
+            # Position the InputWidget as desired
+            self.input_widget.move(self.mapToGlobal(QPoint(0, self.height() + 5)))
+            self.input_widget.show()
+            print("double clicked")
 
 
 class InputWidget(QWidget):
@@ -72,6 +87,7 @@ class InputWidget(QWidget):
         self.input_field = QLineEdit(self)
         self.input_field.setMaximumWidth(200)
         self.input_field.setMaximumHeight(30)
+        self.input_field.returnPressed.connect(self.submit_input)
 
         # Create dropdown menus
         langs = ["en", "ar", "es"]
@@ -88,6 +104,10 @@ class InputWidget(QWidget):
         layout.addWidget(self.dropdown2)
         layout.addWidget(self.input_field)
         self.setLayout(layout)
+
+    def submit_input(self):
+        text = self.input_field.text()
+        print("Submitted text:", text)
 
 
 if __name__ == "__main__":
