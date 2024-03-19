@@ -3,7 +3,8 @@
 
 import os
 import sqlite3
-from EduVocs import translate
+from . import translate
+
 
 class Storage:
     """
@@ -13,9 +14,9 @@ class Storage:
     It includes methods for saving, loading, flipping the state of records between "learning" and "knowing",
     deleting records, and editing the translation of specific records.
     """
+
     db_dir = os.getenv("HOME")
     db_name = "vocabs"
-    __all_records = {}
 
     def __init__(self):
         """
@@ -28,14 +29,41 @@ class Storage:
         self.__con = sqlite3.connect(f"{Storage.db_dir}/{Storage.db_name}.db")
         self.__cur = self.__con.cursor()
         self.__cur.execute(
-            """CREATE TABLE IF NOT EXISTS vocabs(
-        voc_or_sent VARCHAR(256) NOT NULL UNIQUE,
-        translation VARCHAR(265) NOT NULL,
-        source_lang VARCHAR(20) NOT NULL,
-        target_lang VARCHAR(20) NOT NULL,
-        state VARCHAR(1) NOT NULL
-        );"""
+            """CREATE TABLE IF NOT EXISTS user(
+            name VARCHAR(50) NOT NULL,
+            email VARCHAR(100) NOT NULL,
+            native_lang VARCHAR(20) NOT NULL,
+            target_lang VARCHAR(20) NOT NULL
+            );"""
         )
+        self.__cur.execute(
+            """CREATE TABLE IF NOT EXISTS vocabs(
+            voc_or_sent VARCHAR(256) NOT NULL UNIQUE,
+            translation VARCHAR(265) NOT NULL,
+            source_lang VARCHAR(20) NOT NULL,
+            target_lang VARCHAR(20) NOT NULL,
+            state VARCHAR(1) NOT NULL
+            );"""
+        )
+
+    def save_user_data(self, name, email, native_lang, target_lang):
+        """
+        save user's data into database
+        """
+        self.__cur.execute(
+            f"""INSERT INTO user(name, email, native_lang, target_lang)
+            VALUES('{name}', '{email}', '{native_lang}', '{target_lang}')
+            """
+        )
+        self.__con.commit()
+
+    def get_user_data(self):
+        """
+        fetch user's data from the database
+        """
+        # the user table have only one record
+        data = self.__cur.execute("""SELECT * FROM user""")
+        return data.fetchone()
 
     def save_record(self, voc_or_sent, source_lang, target_lang):
         """
@@ -67,7 +95,6 @@ class Storage:
             exit()
 
         self.__con.commit()
-        return self.load_records()
 
     def load_records(self):
         """
@@ -81,17 +108,12 @@ class Storage:
             categorized as "learning" and "knowing."
 
         """
-        result = self.__cur.execute(
-            """SELECT * FROM vocabs WHERE state = 'L'"""
-        )
+        result = self.__cur.execute("""SELECT * FROM vocabs WHERE state = 'L'""")
         all_learning = result.fetchall()
 
-        result = self.__cur.execute(
-            """SELECT * FROM vocabs WHERE state = 'K'"""
-        )
+        result = self.__cur.execute("""SELECT * FROM vocabs WHERE state = 'K'""")
         all_knowing = result.fetchall()
-        Storage.__all_records = {"learning": all_learning, "knowing": all_knowing}
-        return Storage.__all_records
+        return {"learning": all_learning, "knowing": all_knowing}
 
     def flip_record(self, voc_or_sent):
         """
@@ -108,7 +130,6 @@ class Storage:
             f"""UPDATE vocabs SET state = 'K' WHERE voc_or_sent = '{voc_or_sent}'"""
         )
         self.__con.commit()
-        return self.load_records()
 
     def delete_record(self, voc_or_sent):
         """
@@ -122,7 +143,6 @@ class Storage:
             f"""DELETE FROM vocabs WHERE voc_or_sent = '{voc_or_sent}'"""
         )
         self.__con.commit()
-        return self.load_records()
 
     def edit_record_translation(self, voc_or_sent, new_translation):
         """
@@ -138,4 +158,3 @@ class Storage:
             f"""UPDATE vocabs SET translation = '{new_translation}' WHERE voc_or_sent = '{voc_or_sent}'"""
         )
         self.__con.commit()
-        return self.load_records()
