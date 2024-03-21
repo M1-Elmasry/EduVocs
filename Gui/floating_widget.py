@@ -1,12 +1,17 @@
+#!/usr/bin/python3
+
 from PySide6.QtWidgets import (
-                QApplication,
-                QPushButton,
-                QWidget,
-                QLineEdit,
-                QComboBox,
-                QHBoxLayout,
-                )
+    QApplication,
+    QPushButton,
+    QWidget,
+    QLineEdit,
+    QComboBox,
+    QHBoxLayout,
+    QCompleter,
+)
 from PySide6.QtCore import Qt, QPoint
+from ..storage import storage
+from .. import translate
 
 
 class FABWidget(QPushButton):
@@ -42,7 +47,9 @@ class FABWidget(QPushButton):
         # Set the widget initial posotioning
         # Calculate the initial position (centered horizontally and positioned to the left)
         initial_x = 0
-        initial_y = screen_geometry.height() // 2 - self.height() // 2  # Center vertically
+        initial_y = (
+            screen_geometry.height() // 2 - self.height() // 2
+        )  # Center vertically
 
         # Position the button initially
         self.move(initial_x, initial_y)
@@ -53,6 +60,7 @@ class FABWidget(QPushButton):
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.drag_start_position = event.globalPosition() - self.pos()
+            self.input_widget.hide()
 
     def mouseMoveEvent(self, event):
         if event.buttons() == Qt.LeftButton:
@@ -90,24 +98,47 @@ class InputWidget(QWidget):
         self.input_field.returnPressed.connect(self.submit_input)
 
         # Create dropdown menus
-        langs = ["en", "ar", "es"]
-        self.dropdown1 = QComboBox(self)
-        self.dropdown1.addItems(langs)
-        self.dropdown1.setMaximumWidth(60)
-        self.dropdown2 = QComboBox(self)
-        self.dropdown2.addItems(langs)
-        self.dropdown2.setMaximumWidth(60)
+        langs = translate.supported_languages.values()
+
+        self.src_lang_box = QComboBox(self)
+        # make placeholder to edit it with the default language the user will translate from
+        self.src_lang_box.addItem("placeholder")
+        self.src_lang_box.addItems(langs)
+        self.src_lang_box.setMaximumWidth(70)
+        self.src_lang_box.setEditable(True)
+
+        self.dst_lang_box = QComboBox(self)
+        # make placeholder to edit it with the default language the user will translate to
+        self.dst_lang_box.addItem("placeholder")
+        self.dst_lang_box.addItems(langs)
+        self.dst_lang_box.setMaximumWidth(70)
+        self.dst_lang_box.setEditable(True)
+
+        user_data = storage.get_user_data()
+        user_native_lang = user_data[2]
+        user_target_lang = user_data[3]
+
+        self.src_lang_box.setItemText(0, user_target_lang)
+        self.dst_lang_box.setItemText(0, user_native_lang)
+
+        completer = QCompleter(langs)
+        self.src_lang_box.setCompleter(completer)
+        self.dst_lang_box.setCompleter(completer)
 
         # Create layout
         layout = QHBoxLayout()
-        layout.addWidget(self.dropdown1)
-        layout.addWidget(self.dropdown2)
+        layout.addWidget(self.src_lang_box)
+        layout.addWidget(self.dst_lang_box)
         layout.addWidget(self.input_field)
         self.setLayout(layout)
 
     def submit_input(self):
-        text = self.input_field.text()
-        print("Submitted text:", text)
+        word = self.input_field.text()
+        src_lang = self.src_lang_box.currentText()
+        dst_lang = self.dst_lang_box.currentText()
+        print("Submitted text:", word)
+        self.close()
+        storage.save_record(word, src_lang, dst_lang)
 
 
 if __name__ == "__main__":
