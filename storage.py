@@ -62,8 +62,16 @@ class Storage:
         fetch user's data from the database
         """
         # the user table have only one record
-        data = self.__cur.execute("""SELECT * FROM user""")
-        return data.fetchone()
+        data = self.__cur.execute("""SELECT * FROM user;""").fetchone()
+        return data
+
+    def user_exists(self):
+        """
+        check if user table is exists or not
+        """
+        result = self.__cur.execute("SELECT * FROM user;").fetchone()
+
+        return True if result is not None else None
 
     def save_record(self, voc_or_sent, source_lang, target_lang):
         """
@@ -158,3 +166,5 @@ class Storage:
             f"""UPDATE vocabs SET translation = '{new_translation}' WHERE voc_or_sent = '{voc_or_sent}'"""
         )
         self.__con.commit()
+
+storage = Storage()
